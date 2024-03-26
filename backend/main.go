@@ -45,10 +45,12 @@ func main() {
 	r.HandleFunc("/health", healthHandler).Methods(http.MethodGet)
 
 	r.HandleFunc("/citizen", citizenService.CreateCitizenHandler).Methods(http.MethodPost)
-	r.HandleFunc("/citizen", citizenService.FindCitizenAllHandler).Methods(http.MethodGet)
+	r.HandleFunc("/citizen", citizenService.FindFilteredCitizenHandler).Methods(http.MethodGet)
+
 	r.HandleFunc("/citizen/{id}", citizenService.UpdateCitizenByIDHandler).Methods(http.MethodPut)
 	r.HandleFunc("/citizen/{id}", citizenService.DeleteCitizenByIDHandler).Methods(http.MethodDelete)
 	r.HandleFunc("/citizen/{id}", citizenService.FindCitizenByIdHandler).Methods(http.MethodGet)
+
 	log.Println("Server is running 4444")
 	http.ListenAndServe(":4444", r)
 

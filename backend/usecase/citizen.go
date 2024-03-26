@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/dhruvsolanki0811/tsds-assgn-backend/model"
 	"github.com/dhruvsolanki0811/tsds-assgn-backend/repository"
@@ -143,4 +144,61 @@ func (svc *CitizenService) DeleteCitizenByIDHandler(w http.ResponseWriter, r *ht
 	res.Data = count
 	w.WriteHeader(http.StatusOK)
 
+}
+func (svc *CitizenService) FindFilteredCitizenHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	response := make(map[string]interface{})
+
+	queryParams := r.URL.Query()
+	pageStr := queryParams.Get("page")
+	limitStr := queryParams.Get("limit")
+	searchQuery := queryParams.Get("search")
+	state := queryParams.Get("state")
+	city := queryParams.Get("city")
+	gender := queryParams.Get("gender")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page <= 0 {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 2 // default limit
+	}
+
+	repo := repository.CitizenRepo{MongoCollection: svc.MongoCollection}
+	citizens, totalPages, totalRecords, err := repo.FindFilteredCitizenAll(page, limit, searchQuery, state, city, gender)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("Error:", err)
+		response["error"] = err.Error()
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	response["data"] = citizens
+	response["total_pages"] = totalPages
+	response["current_page"] = page
+	response["total_records"] = totalRecords
+	response["records_current_page"] = len(citizens)
+	response["limit"] = limit
+
+	if page*limit < totalRecords {
+		response["next_page"] = page + 1
+	} else {
+		response["next_page"] = nil
+	}
+
+	if page > 1 {
+		response["previous_page"] = page - 1
+	} else {
+		response["previous_page"] = nil
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }
