@@ -1,2 +1,3 @@
 import HomePage from "./HomePage/HomePage";
-export { HomePage };
+import ErrorPage from "./ErrorPage/ErrorPage";
+export { HomePage ,ErrorPage};
