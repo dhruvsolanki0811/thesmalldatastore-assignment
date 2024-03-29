@@ -53,7 +53,12 @@ func main() {
 	r.HandleFunc("/citizen/{id}", citizenService.FindCitizenByIdHandler).Methods(http.MethodGet)
 
 	log.Println("Server is running 4444")
-	http.ListenAndServe(":4444", handlers.CORS(
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "4444"
+	}
+
+	http.ListenAndServe(":"+port, handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
