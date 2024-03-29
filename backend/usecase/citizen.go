@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -27,6 +28,7 @@ func (svc *CitizenService) CreateCitizenHandler(w http.ResponseWriter, r *http.R
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	res := &Response{}
 	defer json.NewEncoder(w).Encode(res)
+	fmt.Println(r.Body)
 	var citizen model.Citizen
 	err := json.NewDecoder(r.Body).Decode(&citizen)
 	if err != nil {
@@ -156,7 +158,6 @@ func (svc *CitizenService) FindFilteredCitizenHandler(w http.ResponseWriter, r *
 	limitStr := queryParams.Get("limit")
 	searchQuery := queryParams.Get("search")
 	state := queryParams.Get("state")
-	city := queryParams.Get("city")
 	gender := queryParams.Get("gender")
 
 	page, err := strconv.Atoi(pageStr)
@@ -169,8 +170,14 @@ func (svc *CitizenService) FindFilteredCitizenHandler(w http.ResponseWriter, r *
 		limit = 2 // default limit
 	}
 
+	cityParams := queryParams["city"]
+	var cities []string
+	for _, city := range cityParams {
+		cities = append(cities, city)
+	}
+
 	repo := repository.CitizenRepo{MongoCollection: svc.MongoCollection}
-	citizens, totalPages, totalRecords, err := repo.FindFilteredCitizenAll(page, limit, searchQuery, state, city, gender)
+	citizens, totalPages, totalRecords, err := repo.FindFilteredCitizenAll(page, limit, searchQuery, state, cities, gender)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

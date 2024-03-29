@@ -70,8 +70,7 @@ func (r *CitizenRepo) DeleteCitizenByID(citizenID string) (int64, error) {
 	return result.DeletedCount, nil
 }
 
-func (r *CitizenRepo) FindFilteredCitizenAll(pageNum, pageSize int, searchQuery, state, city, gender string) ([]model.Citizen, int, int, error) {
-	// Create a filter based on the search query, state, city, and gender
+func (r *CitizenRepo) FindFilteredCitizenAll(pageNum, pageSize int, searchQuery, state string, cities []string, gender string) ([]model.Citizen, int, int, error) {
 	filter := bson.M{}
 	if searchQuery != "" {
 		filter["$or"] = []bson.M{
@@ -83,20 +82,18 @@ func (r *CitizenRepo) FindFilteredCitizenAll(pageNum, pageSize int, searchQuery,
 	if state != "" {
 		filter["state"] = state
 	}
-	if city != "" {
-		filter["city"] = city
+	if len(cities) > 0 {
+		filter["city"] = bson.M{"$in": cities}
 	}
 	if gender != "" {
 		filter["gender"] = gender
 	}
 
-	// Count total records based on the filter
 	totalRecords, err := r.MongoCollection.CountDocuments(context.Background(), filter)
 	if err != nil {
 		return nil, 0, 0, err
 	}
 
-	// Calculate total pages based on total records and page size
 	totalPages := int(totalRecords) / pageSize
 	if int(totalRecords)%pageSize != 0 {
 		totalPages++

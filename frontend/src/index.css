@@ -6,4 +6,6 @@
 :root{
   margin: 0;
   padding: 0;
+  background-color: #f5f7f0;
+  --font-red-colour:#b2101d;
 }

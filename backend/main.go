@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/dhruvsolanki0811/tsds-assgn-backend/usecase"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -52,7 +53,11 @@ func main() {
 	r.HandleFunc("/citizen/{id}", citizenService.FindCitizenByIdHandler).Methods(http.MethodGet)
 
 	log.Println("Server is running 4444")
-	http.ListenAndServe(":4444", r)
+	http.ListenAndServe(":4444", handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+	)(r))
 
 }
 
