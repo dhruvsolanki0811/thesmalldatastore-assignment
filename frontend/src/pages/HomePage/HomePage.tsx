@@ -142,6 +142,7 @@ function HomePage() {
               className="flex border-[1px] rounded-full bg-white px-4 items-center gap-2 p-1 text-[16px] cursor-pointer  hover:text-[var(--font-red-colour)]"
             >
               Location
+              {selectedCities.length>0&& ` (${selectedCities.length})`}
               <IoCaretDownOutline className="text-[1.1rem]" />
             </div>
             {isLocationDropDownOpen && (
