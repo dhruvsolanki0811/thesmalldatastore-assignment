@@ -76,7 +76,16 @@ const CitizenFormModal: React.FC<AddCitizenFormProps> = ({
     e.preventDefault();
     if (action === "ADD") {
       addCitizen(formData);
-      setFormData({} as FormData);
+      setFormData({
+        first_name: "",
+        last_name:  "",
+        date_of_birth:"",
+        gender: "",
+        address: "",
+        city: "",
+        state:"",
+        pincode:"",
+      });
     } else if (action === "EDIT" && editData) {
       editCitizen({ citizen_id: editData.citizen_id, ...formData });
     }

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useFilterStore } from "../../store/filterStore";
 import { famousCities } from "../../utils/utils";
 import { MdDelete } from "react-icons/md";
+import { ToastContainer } from "react-toastify";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -99,7 +100,9 @@ function HomePage() {
 
   return (
     <>
+
       <Navbar></Navbar>
+      <ToastContainer />
       <div className="home-content w-full max-md:px-[1rem] px-[4rem] py-[2rem] ">
         <div className="search-area flex justify-center  items-center gap-3 ">
           <div className="search-box-container bg-white  max-lg:w-[75%] max-xl:w-[75%] w-[60%]  h-[2.6rem] flex items-center justify-between text-[20px] overflow-hidden rounded-[20px] border-[2px] ">
@@ -225,16 +228,21 @@ function HomePage() {
         </div>
 
         <div className="citizen-grid  mt-10  w-full flex flex-col items-center gap-5">
-          {isLoading
-            ? <Loader size={"2rem"} mssg="Free Server Might Take Some Time"></Loader>
-            : data &&
-              data.data &&
-              data.data.map((citizen) => (
-                <CitizenBox
-                  key={citizen.citizen_id}
-                  citizen={citizen}
-                ></CitizenBox>
-              ))}
+          {isLoading ? (
+            <Loader
+              size={"2rem"}
+              mssg="Free Server Might Take Some Time"
+            ></Loader>
+          ) : (
+            data &&
+            data.data &&
+            data.data.map((citizen) => (
+              <CitizenBox
+                key={citizen.citizen_id}
+                citizen={citizen}
+              ></CitizenBox>
+            ))
+          )}
         </div>
         <div className="flex items-center justify-center mt-8">
           {data && data.total_pages > 1 && (

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Citizen, CitizenPaginatedData } from "../types/type";
 import { useFilterStore } from "../store/filterStore";
+import { toast } from "react-toastify";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -42,6 +43,7 @@ export const useAddCitizen = () => {
     mutationFn: addCitizen,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-citizens",currentPage,search,gender,cities.sort().toString()] });
+        toast.success("Citizen Added")
     },
   });
 };
@@ -65,6 +67,8 @@ export const useDeleteCitizen = () => {
     mutationFn: deleteCitizen,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-citizens",currentPage,search,gender,cities.sort().toString()] });
+    
+      toast.success("Citizen Removed")
     },
   });
 };
@@ -83,6 +87,8 @@ export const useEditCitizen = () => {
     mutationFn: editCitizen,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-citizens",currentPage,search,gender,cities.sort().toString()] });
+          toast.success("Citizen Updated")
+
     },
   });
 };
